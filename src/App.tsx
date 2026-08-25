@@ -1,0 +1,15 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Layout from './components/Layout'
+import Home from './pages/Home'
+import Onboarding from './pages/Onboarding'
+import { Learn, LessonPage } from './pages/Learn'
+import Practice from './pages/Practice'
+import Vocabulary from './pages/Vocabulary'
+import Grammar from './pages/Grammar'
+import Speaking from './pages/Speaking'
+import Listening from './pages/Listening'
+import { Phrasebook, Progress, SearchPage, Settings, Tests } from './pages/MorePages'
+import { useAppStore } from './store/useAppStore'
+import { useEffect, useState } from 'react'
+
+export default function App(){const onboarded=useAppStore(s=>s.profile.onboarded);const [hydrated,setHydrated]=useState(useAppStore.persist.hasHydrated());useEffect(()=>useAppStore.persist.onFinishHydration(()=>setHydrated(true)),[]);if(!hydrated)return <main className="app-loading"><span className="brand-mark">D<span>•</span></span><strong>DeutschCoach</strong></main>;if(!onboarded)return <Onboarding/>;return <Routes><Route element={<Layout/>}><Route index element={<Home/>}/><Route path="learn" element={<Learn/>}/><Route path="learn/:level" element={<Learn/>}/><Route path="lesson/:id" element={<LessonPage/>}/><Route path="practice" element={<Practice/>}/><Route path="vocabulary" element={<Vocabulary/>}/><Route path="grammar" element={<Grammar/>}/><Route path="listening" element={<Listening/>}/><Route path="speaking" element={<Speaking/>}/><Route path="conversation" element={<Speaking/>}/><Route path="call-center" element={<Speaking callCenter/>}/><Route path="tests" element={<Tests/>}/><Route path="progress" element={<Progress/>}/><Route path="settings" element={<Settings/>}/><Route path="phrasebook" element={<Phrasebook/>}/><Route path="search" element={<SearchPage/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Route></Routes>}
