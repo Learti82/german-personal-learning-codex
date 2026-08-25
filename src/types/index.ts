@@ -2,8 +2,8 @@ export type GermanLevel = 'A1' | 'A2' | 'B1' | 'B2'
 export type Skill = 'Wortschatz' | 'Grammatik' | 'Hören' | 'Sprechen' | 'Lesen' | 'Schreiben'
 export type ExerciseType = 'choice' | 'fill' | 'translation' | 'order' | 'article' | 'correction' | 'listening'
 
-export interface Lesson { id: string; level: GermanLevel; module: number; title: string; subtitle: string; duration: number; skill: Skill; completed?: boolean; content: string[]; examples: { de: string; sq: string }[] }
-export interface GrammarTopic { id: string; level: GermanLevel; title: string; de: string; sq: string; rule: string; examples: { de: string; sq: string }[]; mistake: string }
+export interface Lesson { id: string; level: GermanLevel; module: number; title: string; subtitle: string; duration: number; skill: Skill; completed?: boolean; content: string[]; examples: { de: string; sq: string }[]; goals?: string[]; usefulPhrases?: { de: string; sq: string }[]; coachTip?: string }
+export interface GrammarTopic { id: string; level: GermanLevel; title: string; de: string; sq: string; rule: string; examples: { de: string; sq: string }[]; mistake: string; when?: string; formula?: string; tips?: string[] }
 export interface VocabularyItem { id: string; word: string; translation: string; article?: 'der'|'die'|'das'; plural?: string; level: GermanLevel; topic: string; example: string; difficulty: 1|2|3; frequency: number }
 export interface Exercise { id: string; level: GermanLevel; type: ExerciseType; prompt: string; options?: string[]; answer: string; explanation: string; skill: Skill }
 export interface ExerciseResult { exerciseId: string; correct: boolean; answer: string; timestamp: number }
@@ -20,3 +20,7 @@ export interface ReviewState { wordId: string; status: 'new'|'learning'|'difficu
 export interface CoachContext { level: GermanLevel; scenario: Conversation; turns: ConversationTurn[] }
 export interface CoachResponse { reply: string; correction: Correction; matchedIntent?: string; nextHint: string }
 export interface GermanCoachEngine { respond(input: string, context: CoachContext): Promise<CoachResponse>; correct(input: string, level: GermanLevel): Promise<Correction> }
+export interface Phrase { id: string; category: string; de: string; sq: string; level: GermanLevel }
+export interface ReadingQuestion { prompt: string; options: string[]; answer: string; explanation: string }
+export interface ReadingText { id: string; level: GermanLevel; title: string; topic: string; text: string; translation: string; vocabulary: { de: string; sq: string }[]; questions: ReadingQuestion[] }
+export interface WritingPrompt { id: string; level: GermanLevel; title: string; situation: string; task: string; checklist: string[]; phrases: { de: string; sq: string }[]; model: string; modelSq: string }

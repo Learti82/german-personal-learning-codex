@@ -1,4 +1,7 @@
-import type { Conversation, Exercise, GermanLevel, GrammarTopic, Lesson, VocabularyItem } from '../types'
+import type { Conversation, GermanLevel, GrammarTopic, Lesson, Phrase, VocabularyItem } from '../types'
+import { expandedExercises, extraConversations, extraGrammar, extraPhrases, extraVocabulary, readingTexts, writingPrompts } from './expandedContent'
+
+export { readingTexts, writingPrompts }
 
 export const levelMeta: Record<GermanLevel, { label: string; color: string; description: string }> = {
   A1: { label: 'Fillimi', color: '#e96d4f', description: 'Bazat e komunikimit të përditshëm' },
@@ -24,7 +27,10 @@ const lessonCopy: Record<GermanLevel, { de: string; sq: string }> = {
 export const lessons: Lesson[] = (Object.keys(modules) as GermanLevel[]).flatMap(level => modules[level].map((title, i) => ({
   id: `${level.toLowerCase()}-${i+1}`, level, module: i+1, title, subtitle: lessonCopy[level].sq, duration: 8 + (i%3)*2,
   skill: (['Wortschatz','Grammatik','Sprechen','Hören'] as const)[i%4], content: [lessonCopy[level].de, lessonCopy[level].sq],
-  examples: [{ de: level === 'A1' ? 'Ich lerne heute Deutsch.' : level === 'A2' ? 'Ich habe gestern Deutsch gelernt.' : level === 'B1' ? 'Ich lerne Deutsch, weil ich in einem Callcenter arbeiten möchte.' : 'Je sicherer ich spreche, desto professioneller kann ich reagieren.', sq: level === 'A1' ? 'Sot mësoj gjermanisht.' : level === 'A2' ? 'Dje kam mësuar gjermanisht.' : level === 'B1' ? 'Mësoj gjermanisht sepse dua të punoj në një call center.' : 'Sa më sigurt flas, aq më profesionalisht mund të reagoj.' }]
+  examples: [{ de: level === 'A1' ? 'Ich lerne heute Deutsch.' : level === 'A2' ? 'Ich habe gestern Deutsch gelernt.' : level === 'B1' ? 'Ich lerne Deutsch, weil ich in einem Callcenter arbeiten möchte.' : 'Je sicherer ich spreche, desto professioneller kann ich reagieren.', sq: level === 'A1' ? 'Sot mësoj gjermanisht.' : level === 'A2' ? 'Dje kam mësuar gjermanisht.' : level === 'B1' ? 'Mësoj gjermanisht sepse dua të punoj në një call center.' : 'Sa më sigurt flas, aq më profesionalisht mund të reagoj.' }],
+  goals:[`Theks kryesor: ${title}`,`Formo të paktën 3 fjali të tua`,`Përdore temën në një situatë reale`],
+  usefulPhrases: level==='A1'?[{de:'Können Sie das bitte wiederholen?',sq:'A mund ta përsërisni ju lutem?'},{de:'Was bedeutet das?',sq:'Çfarë do të thotë kjo?'}]:level==='A2'?[{de:'Könnten Sie bitte langsamer sprechen?',sq:'A mund të flisni më ngadalë?'},{de:'Ich versuche, ein Beispiel zu geben.',sq:'Po përpiqem të jap një shembull.'}]:level==='B1'?[{de:'Wenn ich Sie richtig verstanden habe, …',sq:'Nëse ju kam kuptuar drejt, …'},{de:'Meiner Meinung nach …',sq:'Sipas mendimit tim …'}]:[{de:'Nach sorgfältiger Abwägung …',sq:'Pas një vlerësimi të kujdesshëm …'},{de:'Damit ist gemeint, dass …',sq:'Me këtë nënkuptohet se …'}],
+  coachTip:'Lexoje shembullin, dëgjoje, mbulo përkthimin dhe thuaje sërish pa parë.'
 })))
 
 const vocabSeed: Array<[string,string,string,string?,string?]> = [
@@ -45,12 +51,13 @@ const levelWords: Record<GermanLevel,string[]> = {
  B1:['bearbeiten|përpunoj','weiterleiten|përcjell','nachvollziehen|kuptoj','vorschlagen|propozoj','vermeiden|shmang','gewährleisten|garantoj','berücksichtigen|marr parasysh','zustimmen|pajtohem','widersprechen|kundërshtoj','begründen|arsyetoj'],
  B2:['abwägen|peshoj opsionet','beeinträchtigen|ndikoj negativisht','veranlassen|urdhëroj','entgegenkommen|bëj koncesion','hervorheben|theksoj','voraussetzen|parakushtoj','einräumen|pranoj','präzisieren|saktësoj','vermitteln|ndërmjetësoj','erörtern|shqyrtoj']
 }
-export const vocabulary: VocabularyItem[] = (Object.keys(levelWords) as GermanLevel[]).flatMap((level, li) => [
+const baseVocabulary: VocabularyItem[] = (Object.keys(levelWords) as GermanLevel[]).flatMap((level, li) => [
   ...vocabSeed.map((v,i) => ({ id:`${level}-n-${i}`, topic:v[0], translation:v[1], word:v[2], article:v[3] as VocabularyItem['article'], plural:v[4], level, example:`${v[3] ? v[3]+' ' : ''}${v[2]} ist heute wichtig.`, difficulty: Math.min(3,li+1) as 1|2|3, frequency:100-i })),
   ...levelWords[level].map((entry,i) => { const [word,translation]=entry.split('|'); return { id:`${level}-v-${i}`,topic:'Verben',word,translation,level,example:`Ich ${word} das gern für Sie.`,difficulty:Math.min(3,li+1) as 1|2|3,frequency:90-i }})
 ])
+export const vocabulary: VocabularyItem[] = [...baseVocabulary, ...extraVocabulary]
 
-export const grammarTopics: GrammarTopic[] = [
+const baseGrammarTopics: GrammarTopic[] = [
  { id:'verb-position',level:'A1',title:'Das Verb auf Position 2',de:'Im Hauptsatz steht das konjugierte Verb an zweiter Stelle.',sq:'Në fjalinë kryesore, folja e zgjedhuar qëndron në vendin e dytë.',rule:'Subjekt + Verb + Ergänzung',examples:[{de:'Ich lerne heute Deutsch.',sq:'Sot mësoj gjermanisht.'},{de:'Heute lerne ich Deutsch.',sq:'Sot mësoj gjermanisht.'}],mistake:'Ich heute Deutsch lerne. → Ich lerne heute Deutsch.'},
  { id:'articles',level:'A1',title:'der, die, das',de:'Jedes Nomen hat ein grammatisches Geschlecht.',sq:'Çdo emër ka një gjini gramatikore.',rule:'Maskulin: der · Feminin: die · Neutrum: das',examples:[{de:'der Kunde, die Rechnung, das Problem',sq:'klienti, fatura, problemi'}],mistake:'Ihre Problem → Ihr Problem'},
  { id:'akkusativ',level:'A1',title:'Akkusativ',de:'Der Akkusativ markiert oft das direkte Objekt.',sq:'Akkusativi shpesh shënon kundrinorin e drejtë.',rule:'der → den; ein → einen',examples:[{de:'Ich frage den Kunden.',sq:'E pyes klientin.'}],mistake:'Ich frage der Kunde. → Ich frage den Kunden.'},
@@ -61,20 +68,16 @@ export const grammarTopics: GrammarTopic[] = [
  { id:'passive',level:'B2',title:'Passiv im Kundenservice',de:'Das Passiv fokussiert den Vorgang statt die Person.',sq:'Pësorja përqendrohet te veprimi, jo te personi.',rule:'werden + Partizip II',examples:[{de:'Die Anfrage wird sofort bearbeitet.',sq:'Kërkesa do të përpunohet menjëherë.'}],mistake:'Wir bearbeiten gerade. → Ihre Anfrage wird gerade bearbeitet.'},
  { id:'nominalization',level:'B2',title:'Nominalisierung',de:'Nominalisierungen wirken in formellen Texten präzise.',sq:'Emërzimet tingëllojnë më të sakta në tekstet formale.',rule:'prüfen → die Prüfung',examples:[{de:'Nach Prüfung Ihrer Unterlagen melden wir uns.',sq:'Pas kontrollit të dokumenteve tuaja, do t’ju kontaktojmë.'}],mistake:'Nachdem wir prüfen… → Nach der Prüfung…'}
 ]
+export const grammarTopics: GrammarTopic[] = [...baseGrammarTopics.map(topic=>({
+ ...topic,
+ when: topic.when ?? (topic.level==='A1'?'Për të ndërtuar fjali të sakta në situata të përditshme.':topic.level==='A2'?'Për të treguar përvoja dhe për të lidhur më shumë informacion.':topic.level==='B1'?'Për të komunikuar qartë dhe me mirësjellje në punë.':'Për komunikim të saktë, formal dhe të nuancuar.'),
+ formula: topic.formula ?? topic.rule,
+ tips: topic.tips ?? ['Lexoje rregullin dhe thuaj shembullin me zë.','Ndrysho vetëm një pjesë të shembullit për të krijuar fjalinë tënde.'],
+})), ...extraGrammar]
 
-const choice: Exercise[] = [
- {id:'ex1',level:'A1',type:'choice',prompt:'Ich ___ aus Kosovo.',options:['komme','kommen','kommst','kommt'],answer:'komme',explanation:'Me „ich” përdoret forma „komme”.',skill:'Grammatik'},
- {id:'ex2',level:'A1',type:'article',prompt:'___ Problem',options:['der','die','das'],answer:'das',explanation:'Problem është asnjanës: das Problem.',skill:'Wortschatz'},
- {id:'ex3',level:'A2',type:'fill',prompt:'Ich ___ die Rechnung geprüft.',answer:'habe',explanation:'Perfekt: haben + geprüft.',skill:'Grammatik'},
- {id:'ex4',level:'A2',type:'translation',prompt:'Përkthe: Ju falënderoj për durimin tuaj.',answer:'Vielen Dank für Ihre Geduld.',explanation:'Shprehje shumë e përdorur në customer service.',skill:'Schreiben'},
- {id:'ex5',level:'B1',type:'order',prompt:'Rendit: Ihnen / gerne / ich / weiter / helfe',answer:'Ich helfe Ihnen gerne weiter.',explanation:'Folja e zgjedhuar është në pozicionin 2.',skill:'Grammatik'},
- {id:'ex6',level:'B1',type:'correction',prompt:'Korrigjo: Weil ich brauche Ihre Kundennummer.',answer:'Weil ich Ihre Kundennummer brauche.',explanation:'Pas „weil”, folja shkon në fund.',skill:'Grammatik'},
- {id:'ex7',level:'B2',type:'choice',prompt:'Ihre Anfrage ___ derzeit bearbeitet.',options:['wird','werden','wurde sein','hat'],answer:'wird',explanation:'Passiv Präsens: wird + Partizip II.',skill:'Grammatik'},
- {id:'ex8',level:'B2',type:'translation',prompt:'Përkthe: Ne do t’i shqyrtojmë të dyja alternativat.',answer:'Wir werden beide Alternativen abwägen.',explanation:'„abwägen” = të peshohen/shqyrtohen opsionet.',skill:'Schreiben'}
-]
-export const exercises: Exercise[] = Array.from({length: 12},(_,round)=>choice.map(e=>({...e,id:`${e.id}-${round}`,prompt:round===0?e.prompt:`${e.prompt} · Übung ${round+1}`}))).flat()
+export const exercises = expandedExercises
 
-export const conversations: Conversation[] = [
+const baseConversations: Conversation[] = [
  {id:'intro',title:'Sich vorstellen',level:'A1',category:'Alltag',opening:'Hallo! Ich heiße Mia. Wie heißt du?',goal:'Stelle dich in zwei Sätzen vor.',intents:[{id:'introduce',keywords:['ich heiße','mein name','ich bin'],response:'Freut mich! Woher kommst du?',hint:'Sag: „Ich heiße … und komme aus …”'},{id:'origin',keywords:['komme aus','aus kosovo','wohne in'],response:'Sehr schön! Was machst du beruflich?',hint:'Sag, woher du kommst oder wo du wohnst.'}]},
  {id:'restaurant',title:'Im Restaurant',level:'A1',category:'Alltag',opening:'Guten Abend! Was möchten Sie bestellen?',goal:'Bestelle höflich Essen und ein Getränk.',intents:[{id:'order',keywords:['ich möchte','ich hätte gern','bitte'],response:'Sehr gern. Möchten Sie auch etwas trinken?',hint:'Nutze „Ich hätte gern …, bitte.”'},{id:'drink',keywords:['wasser','kaffee','tee','trinken'],response:'Kommt sofort. Guten Appetit!',hint:'Bestelle ein Getränk.'}]},
  {id:'appointment',title:'Termin vereinbaren',level:'A2',category:'Arbeit',opening:'Guten Tag. Wann passt Ihnen ein Termin?',goal:'Vereinbare und bestätige einen Termin.',intents:[{id:'schedule',keywords:['am montag','am dienstag','um','termin'],response:'Passt Ihnen 14 Uhr?',hint:'Nenne einen Tag und eine Uhrzeit.'},{id:'confirm',keywords:['das passt','einverstanden','bestätige','ja gern'],response:'Perfekt. Dann sehen wir uns am vereinbarten Termin.',hint:'Bestätige den Termin höflich.'}]},
@@ -82,7 +85,9 @@ export const conversations: Conversation[] = [
  {id:'internet-angry',title:'Internet ausgefallen',level:'B1',category:'Callcenter',mood:'Verärgert',opening:'Guten Tag! Mein Internet funktioniert schon seit gestern nicht! Das ist wirklich ärgerlich.',goal:'Deeskaliere und beginne die Fehleranalyse.',intents:[{id:'empathy',keywords:['verstehe','ärger','tut mir leid','entschuldige'],response:'Gut, aber ich brauche heute eine Lösung.',hint:'Entschuldige dich und zeige Verständnis.'},{id:'clarify',keywords:['seit wann','router','leuchtet','neu gestartet'],response:'Die rote Lampe am Router blinkt. Neu gestartet habe ich ihn schon.',hint:'Stelle eine konkrete Diagnosefrage.'},{id:'solution',keywords:['techniker','störung','weiterleiten','ticket'],response:'In Ordnung. Wann kann der Techniker kommen?',hint:'Biete den nächsten konkreten Schritt an.'}]},
  {id:'refund',title:'Rückgabe & Erstattung',level:'B2',category:'Callcenter',mood:'Enttäuscht',opening:'Das gelieferte Gerät ist defekt. Ich erwarte eine sofortige Erstattung.',goal:'Kläre Anspruch und erkläre den Prozess präzise.',intents:[{id:'acknowledge',keywords:['bedauere','nachvollziehen','verständnis'],response:'Danke. Wie läuft die Rückgabe jetzt genau ab?',hint:'Erkenne das Problem professionell an.'},{id:'process',keywords:['rücksendeetikett','erstattung','zurücksenden','bearbeitet'],response:'Wie lange dauert es, bis das Geld wieder auf meinem Konto ist?',hint:'Erkläre den Rückgabeprozess.'},{id:'timeline',keywords:['werktage','tage','sobald','eingang'],response:'Gut, damit bin ich einverstanden. Vielen Dank.',hint:'Nenne einen realistischen Zeitrahmen.'}]}
 ]
+export const conversations: Conversation[] = [...baseConversations, ...extraConversations]
 
-export const phrases = [
+const basePhrases: Phrase[] = [
  ['Begrüßung','Guten Tag. Wie kann ich Ihnen helfen?','Mirëdita. Si mund t’ju ndihmoj?'],['Callcenter','Könnten Sie mir bitte Ihre Kundennummer nennen?','A mund të ma thoni numrin tuaj të klientit?'],['Callcenter','Einen Moment bitte. Ich überprüfe das kurz für Sie.','Një moment ju lutem. Po e kontrolloj shkurt për ju.'],['Callcenter','Vielen Dank für Ihre Geduld.','Ju faleminderit për durimin tuaj.'],['Beschwerde','Ich verstehe Ihren Ärger.','E kuptoj zemërimin tuaj.'],['Beschwerde','Ich entschuldige mich für die Unannehmlichkeiten.','Kërkoj falje për shqetësimet.'],['Arbeit','Ich leite Sie an die zuständige Abteilung weiter.','Po ju transferoj te departamenti përgjegjës.'],['Arbeit','Darf ich die Angaben kurz zusammenfassen?','A mund t’i përmbledh shkurt të dhënat?'],['Abschluss','Kann ich sonst noch etwas für Sie tun?','A mund të bëj diçka tjetër për ju?'],['Abschluss','Vielen Dank für Ihren Anruf. Auf Wiederhören!','Faleminderit për telefonatën. Mirupafshim!']
 ].map((p,i)=>({id:`p${i}`,category:p[0],de:p[1],sq:p[2],level:(i<2?'A1':i<5?'A2':i<8?'B1':'B2') as GermanLevel}))
+export const phrases: Phrase[] = [...basePhrases, ...extraPhrases]
