@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { sites } from '@openai/sites-vite-plugin'
 
 export default defineConfig({
   plugins: [react(), VitePWA({
@@ -17,7 +18,7 @@ export default defineConfig({
         { src: '/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
       ]
     },
-    workbox: { navigateFallback: '/index.html', globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], runtimeCaching: [] }
-  })],
+    workbox: { navigateFallback: '/index.html', globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], globIgnores: ['server/**'], runtimeCaching: [] }
+  }), sites()],
   server: { port: 5173 }
 })
