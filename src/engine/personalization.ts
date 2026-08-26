@@ -3,8 +3,8 @@ import type { DailyTask, GermanLevel, GrammarTopic } from '../types'
 import { grammarTopics } from '../data/content'
 
 const goalFocus:Record<string,{skill:DailyTask['skill'];route:string;title:string;subtitle:string}>={
- 'Everyday German':{skill:'Sprechen',route:'/speaking',title:'Alltag sprechen',subtitle:'Eine reale Alltagssituation'},
- 'Call center':{skill:'Sprechen',route:'/call-center',title:'Kundengespräch',subtitle:'Deeskalation und klare Hilfe'},
+ 'Everyday German':{skill:'Sprechen',route:'/voice-coach',title:'Mit Mia sprechen',subtitle:'Dein kostenloses Live-Gespräch'},
+ 'Call center':{skill:'Sprechen',route:'/voice-coach',title:'Mit Mia trainieren',subtitle:'Kundengespräch und klare Hilfe'},
  'Reach B1/B2':{skill:'Grammatik',route:'/grammar',title:'Niveau aufbauen',subtitle:'Deine nächste Grammatikstufe'},
  'Goethe/TELC':{skill:'Lesen',route:'/placement',title:'Prüfungsmodus',subtitle:'Lesen, Hören und Schreiben unter Testbedingungen'},
 }

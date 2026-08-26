@@ -5,7 +5,7 @@ import { useAppStore } from '../store/useAppStore'
 import HelpCenter from './HelpCenter'
 
 const nav=[
- {to:'/',label:'Heute',icon:Home},{to:'/learn',label:'Kurs',icon:GraduationCap},{to:'/practice',label:'Üben',icon:Sparkles},{to:'/speaking',label:'Sprechen',icon:Mic2},{to:'/progress',label:'Fortschritt',icon:BarChart3},
+ {to:'/',label:'Heute',icon:Home},{to:'/learn',label:'Kurs',icon:GraduationCap},{to:'/practice',label:'Üben',icon:Sparkles},{to:'/voice-coach',label:'Mia Coach',icon:Mic2},{to:'/progress',label:'Fortschritt',icon:BarChart3},
 ]
 const more=[{to:'/flashcards',label:'Karteikarten',icon:Layers3},{to:'/mastery',label:'Meine Grammatik',icon:BrainCircuit},{to:'/mistakes',label:'Meine Fehler',icon:BookOpenCheck},{to:'/vocabulary',label:'Wortschatz',icon:BookOpen},{to:'/grammar',label:'Grammatik',icon:MessageCircle},{to:'/listening',label:'Hören',icon:Headphones},{to:'/reading',label:'Lesen',icon:FileText},{to:'/writing',label:'Schreiben',icon:PenLine},{to:'/call-center',label:'Call Center',icon:BriefcaseBusiness},{to:'/importer',label:'Eigene Texte',icon:ScanText},{to:'/phrasebook',label:'Redemittel',icon:ScrollText},{to:'/placement',label:'Einstufungstest',icon:ClipboardCheck},{to:'/tests',label:'Prüfungen',icon:ClipboardCheck},{to:'/settings',label:'Einstellungen',icon:Settings}]
 export default function Layout(){
