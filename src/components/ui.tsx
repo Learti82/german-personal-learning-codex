@@ -1,9 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
 import { Check, Flame, Volume2 } from 'lucide-react'
 import { speakGerman } from '../engine/coach'
 import type { GermanLevel } from '../types'
 
-export const Card=({children,className=''}:{children:ReactNode;className?:string})=><section className={`card ${className}`}>{children}</section>
+export const Card=({children,className='',...props}:HTMLAttributes<HTMLElement>&{children:ReactNode})=><section className={`card ${className}`} {...props}>{children}</section>
 export const Button=({children,className='',variant='primary',...props}:ButtonHTMLAttributes<HTMLButtonElement>&{variant?:'primary'|'secondary'|'ghost'|'danger'})=><button className={`btn btn-${variant} ${className}`} {...props}>{children}</button>
 export const ProgressBar=({value,color}:{value:number;color?:string})=><div className="progress-track" role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100}><span style={{width:`${Math.min(100,value)}%`,background:color}} /></div>
 export const LevelBadge=({level}:{level:GermanLevel})=><span className={`level-badge level-${level.toLowerCase()}`}>{level}</span>

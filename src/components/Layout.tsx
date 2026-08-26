@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, BriefcaseBusiness, ClipboardCheck, FileText, GraduationCap, Headphones, Home, Menu, MessageCircle, Mic2, PenLine, ScrollText, Search, Settings, Sparkles, X } from 'lucide-react'
+import { BarChart3, BookOpen, BookOpenCheck, BrainCircuit, BriefcaseBusiness, ClipboardCheck, FileText, GraduationCap, Headphones, Home, Layers3, Menu, MessageCircle, Mic2, PenLine, ScanText, ScrollText, Search, Settings, Sparkles, X } from 'lucide-react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
@@ -7,7 +7,7 @@ import HelpCenter from './HelpCenter'
 const nav=[
  {to:'/',label:'Heute',icon:Home},{to:'/learn',label:'Kurs',icon:GraduationCap},{to:'/practice',label:'Üben',icon:Sparkles},{to:'/speaking',label:'Sprechen',icon:Mic2},{to:'/progress',label:'Fortschritt',icon:BarChart3},
 ]
-const more=[{to:'/vocabulary',label:'Wortschatz',icon:BookOpen},{to:'/grammar',label:'Grammatik',icon:MessageCircle},{to:'/listening',label:'Hören',icon:Headphones},{to:'/reading',label:'Lesen',icon:FileText},{to:'/writing',label:'Schreiben',icon:PenLine},{to:'/call-center',label:'Call Center',icon:BriefcaseBusiness},{to:'/phrasebook',label:'Redemittel',icon:ScrollText},{to:'/tests',label:'Prüfungen',icon:ClipboardCheck},{to:'/settings',label:'Einstellungen',icon:Settings}]
+const more=[{to:'/flashcards',label:'Karteikarten',icon:Layers3},{to:'/mastery',label:'Meine Grammatik',icon:BrainCircuit},{to:'/mistakes',label:'Meine Fehler',icon:BookOpenCheck},{to:'/vocabulary',label:'Wortschatz',icon:BookOpen},{to:'/grammar',label:'Grammatik',icon:MessageCircle},{to:'/listening',label:'Hören',icon:Headphones},{to:'/reading',label:'Lesen',icon:FileText},{to:'/writing',label:'Schreiben',icon:PenLine},{to:'/call-center',label:'Call Center',icon:BriefcaseBusiness},{to:'/importer',label:'Eigene Texte',icon:ScanText},{to:'/phrasebook',label:'Redemittel',icon:ScrollText},{to:'/placement',label:'Einstufungstest',icon:ClipboardCheck},{to:'/tests',label:'Prüfungen',icon:ClipboardCheck},{to:'/settings',label:'Einstellungen',icon:Settings}]
 export default function Layout(){
  const profile=useAppStore(s=>s.profile);const progress=useAppStore(s=>s.progress);const [drawer,setDrawer]=useState(false);const [search,setSearch]=useState(false);const loc=useLocation();const navigate=useNavigate()
  useEffect(()=>setDrawer(false),[loc.pathname]);useEffect(()=>{document.documentElement.dataset.theme=profile.theme},[profile.theme])
