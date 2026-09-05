@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { correctGerman, normalizeText, similarity, validateAnswer } from '../engine/grammar'
-import { dueForReview, scheduleReview } from '../engine/srs'
+import { dueForReview, scheduleReview, scheduleReviewGrade } from '../engine/srs'
 import { LocalCoachEngine } from '../engine/coach'
 import { conversations, exercises, grammarTopics, phrases, readingTexts, vocabulary, writingPrompts } from '../data/content'
 import { analyzeMaterial } from '../engine/importer'
@@ -20,6 +20,7 @@ describe('exercise scoring',()=>{
 describe('spaced repetition',()=>{
  it('increases interval on success',()=>{const first=scheduleReview(undefined,true,0);const second=scheduleReview(first,true,0);expect(first.interval).toBe(1);expect(second.interval).toBe(3)})
  it('marks mistakes difficult and due items',()=>{const failed=scheduleReview(undefined,false,0);expect(failed.status).toBe('difficult');expect(dueForReview([failed],86400000)).toHaveLength(1)})
+ it('supports four Anki-style review grades',()=>{expect(scheduleReviewGrade(undefined,'again',0).nextReview).toBe(600000);expect(scheduleReviewGrade(undefined,'hard',0).interval).toBe(2);expect(scheduleReviewGrade(undefined,'good',0).interval).toBe(1);expect(scheduleReviewGrade(undefined,'easy',0).interval).toBe(4)})
 })
 describe('local coach',()=>{
  it('detects customer number intent',async()=>{const scenario=conversations.find(c=>c.id==='billing')!;const result=await new LocalCoachEngine().respond('Könnten Sie mir bitte Ihre Kundennummer nennen?',{level:'B1',scenario,turns:[]});expect(result.matchedIntent).toBe('customer_number');expect(result.reply).toContain('847291')})
