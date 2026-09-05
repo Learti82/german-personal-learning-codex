@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { sites } from '@openai/sites-vite-plugin'
 
+const isVercel=Boolean((globalThis as {process?:{env?:Record<string,string|undefined>}}).process?.env?.VERCEL)
+
 export default defineConfig({
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate',
@@ -19,6 +21,6 @@ export default defineConfig({
       ]
     },
     workbox: { navigateFallback: '/index.html', globPatterns: ['**/*.{js,css,html,svg,png,woff2}'], globIgnores: ['server/**'], runtimeCaching: [] }
-  }), sites()],
+  }), ...(!isVercel ? [sites()] : [])],
   server: { port: 5173 }
 })
